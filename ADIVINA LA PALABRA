@@ -1,0 +1,79 @@
+#POSIBLE SOLUCION AL EJERCICIO 66 DE https://retosdeprogramacion.com/ejercicios/
+#Crea un pequeño juego que consista en adivinar palabras en un número máximo de intentos:
+# * - El juego comienza proponiendo una palabra aleatoria incompleta
+# *   - Por ejemplo "m_ur_d_v", y el número de intentos que le quedan
+# * - El usuario puede introducir únicamente una letra o una palabra (de la misma longitud que
+# *   la palabra a adivinar)
+# *   - Si escribe una letra y acierta, se muestra esa letra en la palabra. Si falla, se resta
+# *     uno al número de intentos
+# *   - Si escribe una resolución y acierta, finaliza el juego, en caso contrario, se resta uno
+# *     al número de intentos
+# *   - Si el contador de intentos llega a 0, el jugador pierde
+# * - La palabra debe ocultar de forma aleatoria letras, y nunca puede comenzar
+# *   ocultando más del 60%
+# * - Puedes utilizar las palabras que quieras y el número de intentos que consideres
+
+import random
+#Declaramos las variables
+lista_palabras = []
+
+while len(lista_palabras) < 3:
+    arbitro = input()
+    
+    lista_palabras.append(arbitro)
+palabra = random.choice(lista_palabras)
+
+intentos = 10
+palabra_cifrada = ""
+
+
+
+ocultas = round(len(palabra)*0.6)  #Se ocultan el 60% de las letras de la palabra
+posiciones_ocultas = random.sample(range(len(palabra)), k=ocultas) #Ocultamos las palabras por la posicion
+
+for indice, letra in enumerate(palabra):
+    palabra_cifrada += "_ " if indice in posiciones_ocultas else letra + " " 
+
+print(f"Bienvenido al juego de adivinar la palabra oculta\n{palabra_cifrada}. Dispone de {intentos} intentos\nSUERTE!!!")
+
+while intentos > 0:
+    nueva_palabra_cifrada = ""
+    jugador = input("Introduzca una letra o la palabra entera: ")
+    if len(jugador) == 1:
+        encontrada = False
+        for indice, letra in enumerate(palabra):
+            if jugador == letra and palabra_cifrada[indice*2] == "_":
+                nueva_palabra_cifrada += jugador + " "
+                encontrada = True
+            else:
+                nueva_palabra_cifrada += palabra_cifrada[indice*2] + " "
+        
+        palabra_cifrada = nueva_palabra_cifrada       
+        if encontrada:
+            if palabra == palabra_cifrada:
+                print("Palabra encontrada")
+                break
+            else:
+                print(f"Has acertado la letra, sigue así {palabra_cifrada}")
+                print(f"Te quedan {intentos} intentos")
+            
+        else:
+            print("letra no encontrada")
+            intentos -= 1
+            print(f"Te quedan {intentos} intentos")
+        
+    elif len(jugador) == len(palabra):
+        if jugador == palabra:
+            print(f"Has acertado, la palabra era {palabra}, juego terminado")
+            break
+        else:
+            print("Has fallado, intentalo de nuevo")
+            intentos -= 1
+            print(f"Te quedan {intentos} intentos")
+    
+    else:
+        print("Palabra incorrecta, intentelo de nuevo")
+        intentos -= 1
+        print(f"Te quedan {intentos} intentos")
+if intentos == 0:
+    print("Juego terminado, no le quedan mas intentos")
